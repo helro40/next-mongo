@@ -4,3 +4,5 @@ export async function register() {
   console.log("Connecting to database...");
   await connect();
 }
+
+export default register;

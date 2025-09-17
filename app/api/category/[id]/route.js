@@ -1,5 +1,5 @@
 import Category from "@/models/Category";
-import dbConnect from "@/lib/mongodb"; // Make sure this connects to your MongoDB
+import dbConnect from "@/lib/db"; // Make sure this connects to your MongoDB
 
 export async function GET(request, { params }) {
   await dbConnect();

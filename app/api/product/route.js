@@ -1,6 +1,8 @@
 import Product from "@/models/Product";
+import dbConnect from "@/lib/db"; // Make sure this points to your db.js
 
 export async function GET() {
+  await dbConnect(); // connect to MongoDB
   return Response.json(await Product.find());
 }
 
