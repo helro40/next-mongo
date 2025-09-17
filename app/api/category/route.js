@@ -1,42 +1,43 @@
 import Category from "@/models/Category";
+import dbConnect from "@/lib/mongodb"; // make sure you connect to MongoDB
 
 export async function GET(request) {
-  // console.log('GET /api/category',request.nextUrl.searchParams.get("pno"))
-  const pno = request.nextUrl.searchParams.get("pno")
+  await dbConnect();
+
+  const pno = request.nextUrl.searchParams.get("pno");
   if (pno) {
-    const size = 3 // TODO fix this hard code
-    const startIndex = (pno - 1) * size
+    const size = 3; // TODO: fix hardcode
+    const startIndex = (pno - 1) * size;
     const categories = await Category.find()
       .sort({ order: -1 })
       .skip(startIndex)
-      .limit(size)
-    return Response.json(categories)
+      .limit(size);
+    return new Response(JSON.stringify(categories), { status: 200 });
   }
 
-  const s = request.nextUrl.searchParams.get("s")
+  const s = request.nextUrl.searchParams.get("s");
   if (s) {
     const categories = await Category
-      .find({ name: { $regex: s, $options: 'i' } })
-      .sort({ order: -1 })
-    return Response.json(categories)
+      .find({ name: { $regex: s, $options: "i" } })
+      .sort({ order: -1 });
+    return new Response(JSON.stringify(categories), { status: 200 });
   }
 
-  const categories = await Category.find().sort({ order: -1 })
-  return Response.json(categories)
+  const categories = await Category.find().sort({ order: -1 });
+  return new Response(JSON.stringify(categories), { status: 200 });
 }
 
 export async function POST(request) {
-  const body = await request.json()
-  const category = new Category(body)
-  await category.save()
-  return Response.json(category)
+  await dbConnect();
+  const body = await request.json();
+  const category = new Category(body);
+  await category.save();
+  return new Response(JSON.stringify(category), { status: 201 });
 }
 
-
-
-// for V2
 export async function PUT(request) {
-  const body = await request.json()
-  const category = await Category.findByIdAndUpdate(body._id, body)
-  return Response.json(category)
+  await dbConnect();
+  const body = await request.json();
+  const category = await Category.findByIdAndUpdate(body._id, body, { new: true });
+  return new Response(JSON.stringify(category), { status: 200 });
 }
